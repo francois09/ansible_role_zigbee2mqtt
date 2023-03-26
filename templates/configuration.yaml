@@ -1,0 +1,31 @@
+homeassistant: true
+availability: true
+permit_join: false
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://localhost
+serial:
+  port: /dev/ttyUSB0
+advanced:
+{% if z2m__network_key is defined %}
+  network_key:
+{%   for k in z2m__network_key %}
+    - {{ k }}
+{%   endfor %}
+{% else %}
+  network_key: GENERATE
+{% endif %}
+  homeassistant_legacy_entity_attributes: false
+  legacy_api: false
+  legacy_availability_payload: false
+frontend:
+  auth_token: {{ z2m__auth }}
+device_options:
+  legacy: false
+devices:
+{% for dev,value in z2m__devices.items() %}
+  '{{ dev }}':
+{%   for k,v in value.items() %}
+    {{ k }}: {{ v }}
+{%   endfor %}
+{% endfor %}

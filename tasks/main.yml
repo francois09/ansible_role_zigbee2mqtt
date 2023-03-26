@@ -1,0 +1,104 @@
+---
+- name: Add nodesource apt key
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+  when: z2m__install
+
+- name: Add nodesource repository
+  apt_repository:
+    filename: nodesource
+    repo: "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/{{ z2m__node_repository }} {{ ansible_distribution_release }}  main"
+    update_cache: false
+    state: present
+  register: nodesource_repo
+  when: z2m__install
+
+- name: Add nodesource source repository
+  apt_repository:
+    filename: nodesource
+    repo: "deb-src [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/{{ z2m__node_repository }} {{ ansible_distribution_release }}  main"
+    update_cache: false
+    state: present
+  register: nodesource_repo
+  when: z2m__install
+
+- name: Update repo now
+  apt:
+    update_cache: true
+  when:
+    - z2m__install
+    - nodesource_repo is changed
+
+- name: Zigbee2mqtt install packages
+  apt:
+    name: "{{ z2m__default_packages }}"
+    update_cache: yes
+    state: present
+  when: z2m__install
+
+- name: Create zigbee2mqtt directory
+  file:
+    path: "{{ z2m__install_dir }}"
+    owner: "{{ z2m__owner }}"
+    group: "{{ z2m__group }}"
+    state: directory
+    mode: '0755'
+  when: z2m__install
+
+- name: Git checkout z2m
+  git:
+    repo: "https://github.com/Koenkk/zigbee2mqtt.git"
+    dest: "{{ z2m__install_dir }}"
+  ignore_errors: True
+  when: z2m__install
+
+- name: Change ownership of cloned repo
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ z2m__install_dir }}"
+    owner: "{{ z2m__owner }}"
+    group: "{{ z2m__group }}"
+  when: z2m__install
+
+- name: Create zigbee2mqtt systemd service file
+  template:
+    src: zigbee2mqtt.service
+    dest: /etc/systemd/system/zigbee2mqtt.service
+  when: z2m__install
+
+- name: Check if it's already npm'ed
+  stat:
+    path: "{{ z2m__install_dir }}/node_modules"
+  register: z2m_npmed
+  check_mode: false
+  when: z2m__install
+
+- name: Run npm for install if needed
+  shell: "cd {{ z2m__install_dir }}; sudo -u {{ z2m__owner }} npm ci"
+  when:
+    - not z2m_npmed.stat.exists
+    - z2m__install
+    - z2m__configure
+
+- name: Stop service
+  service:
+    name: zigbee2mqtt.service
+    state: stopped
+  when:
+    - z2m__install
+    - z2m__configure
+
+# - collect existant devices -> Custom facts ?
+# - collect network_key -> Custom facts ?
+
+- name: Setup configuration
+  template:
+    src: configuration.yaml
+    dest: "{{ z2m__install_dir }}/data/configuration.yaml"
+  when: z2m__install
+
+### TODO ###
+# Update data/configuration.yaml
+# Restart service
