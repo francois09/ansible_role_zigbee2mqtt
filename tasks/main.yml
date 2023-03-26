@@ -97,7 +97,9 @@
   template:
     src: configuration.yaml
     dest: "{{ z2m__install_dir }}/data/configuration.yaml"
-  when: z2m__install
+  when:
+    - z2m__install
+    - z2m__configure
 
 ### TODO ###
 # Update data/configuration.yaml
