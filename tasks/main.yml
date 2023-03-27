@@ -90,6 +90,7 @@
     - z2m__install
     - z2m__configure
 
+### TODO ###
 # - collect existant devices -> Custom facts ?
 # - collect network_key -> Custom facts ?
 
@@ -101,6 +102,10 @@
     - z2m__install
     - z2m__configure
 
-### TODO ###
-# Update data/configuration.yaml
-# Restart service
+- name: Start service
+  service:
+    name: zigbee2mqtt.service
+    state: started
+  when:
+    - z2m__install
+    - z2m__configure
