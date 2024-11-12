@@ -1,5 +1,9 @@
 homeassistant: true
-availability: true
+availability:
+  active:
+    timeout: 10
+  passive:
+    timeout: 2880
 permit_join: false
 mqtt:
   base_topic: zigbee2mqtt

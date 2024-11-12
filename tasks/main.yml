@@ -23,6 +23,18 @@
   register: nodesource_repo
   when: z2m__install
 
+- name: Set nsolid prefs
+  template:
+    dest: /etc/apt/preferences.d/nsolid
+    src: etc.apt.preferences.d.nsolid
+  when: z2m__install
+
+- name: Set nodejs prefs
+  template:
+    dest: /etc/apt/preferences.d/nodejs
+    src: etc.apt.preferences.d.nodejs
+  when: z2m__install
+
 - name: Update repo now
   apt:
     update_cache: true
