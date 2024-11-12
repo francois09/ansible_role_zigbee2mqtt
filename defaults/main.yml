@@ -3,7 +3,9 @@
 z2m__install: False
 z2m__configure: False
 
-z2m__node_repository: node_16.x
+z2m__node_version: 18.x
+z2m__node_repository: node_{{ z2m__node_version }}
+z2m__node_setup: setup_{{ z2m__node_version }}
 
 z2m__owner: root
 z2m__group: root
