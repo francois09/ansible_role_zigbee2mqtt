@@ -6,7 +6,8 @@ After=network.target
 Environment=NODE_ENV=production
 ExecStart=/usr/bin/npm start
 WorkingDirectory=/opt/zigbee2mqtt
-StandardOutput=inherit
+# StandardOutput=inherit
+StandardOutput=null
 # Or use StandardOutput=null if you don't want Zigbee2MQTT messages filling syslog, for more options see systemd.exec(5)
 StandardError=inherit
 Restart=always
