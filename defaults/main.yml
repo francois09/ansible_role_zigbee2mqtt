@@ -3,7 +3,8 @@
 z2m__install: False
 z2m__configure: False
 
-z2m__node_version: 18.x
+z2m__use_debian_package: False
+z2m__node_version: 22.x
 z2m__node_repository: node_{{ z2m__node_version }}
 z2m__node_setup: setup_{{ z2m__node_version }}
 
@@ -15,8 +16,11 @@ z2m__install_dir: /opt/zigbee2mqtt
 # defaults file for zigbee2mqtt
 z2m__default_packages:
   - nodejs
+  # - npm
   - mosquitto
-  - git
-  - make
-  - g++
-  - gcc
+  # - git
+  # - make
+  # - g++
+  # - gcc
+
+z2m__additionnal_packages: []
