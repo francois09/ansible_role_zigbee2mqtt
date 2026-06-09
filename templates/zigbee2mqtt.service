@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Environment=NODE_ENV=production
-ExecStart=/usr/bin/npm start
+ExecStart=pnpm start
 WorkingDirectory=/opt/zigbee2mqtt
 # StandardOutput=inherit
 StandardOutput=null
